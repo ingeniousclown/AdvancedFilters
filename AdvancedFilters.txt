@@ -1,0 +1,8 @@
+## Title: Advanced Filters
+## Author: ingeniousclown
+## Version: 0.1.1
+## APIVersion: 100003
+
+AdvancedFilterGroup.lua
+AdvancedFilterData.lua
+AdvancedFilters.lua
