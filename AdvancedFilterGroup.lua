@@ -7,13 +7,14 @@ end
 
 local SUBFILTER_HEIGHT = 40
 local ICON_SIZE = 32 	--this will be square
-local STARTX = 168
+local STARTX = 148
 
 local HIGHLIGHT_TEXTURE = [[/esoui/art/actionbar/magechamber_lightningspelloverlay_up.dds]]
 local highlightTexture = nil
 
 local defaultCallback = nil
 local currentSelected = nil
+local currentDropdown = nil
 
 AdvancedFilterGroup = ZO_Object:Subclass()
 
@@ -25,31 +26,31 @@ local function MoveHighlightToMe( self )
 end
 
 local function OnClickedCallback( self )
-	if(self.isSelected) then
-		self:GetParent():GetParent():GetNamedChild("Label"):SetText("ALL")
-		highlightTexture:SetHidden(true)
-		PLAYER_INVENTORY.inventories[GetCurrentInventoryType()].additionalFilter = defaultCallback
-		self.isSelected = false
-		currentSelected = nil
+	if(not GetCurrentInventoryType()) then return end
+
+	if(not currentDropdown) then
+		PLAYER_INVENTORY.inventories[GetCurrentInventoryType()].additionalFilter = self.filterCallback
 	else
-		if(highlightTexture:IsHidden()) then
-			defaultCallback = PLAYER_INVENTORY.inventories[GetCurrentInventoryType()].additionalFilter
-		end
-		MoveHighlightToMe(self)
 		PLAYER_INVENTORY.inventories[GetCurrentInventoryType()].additionalFilter = function(slot)
-				if(not defaultCallback) then 
-					return self.filterCallback(slot)
-				else
-					return self.filterCallback(slot) and defaultCallback(slot)
-				end 
+				return self.filterCallback(slot) and currentDropdown.filterCallback(slot)
 			end
-		if(currentSelected) then
-			currentSelected.isSelected = false
-		end
-		self.isSelected = true
-		currentSelected = self
 	end
 	PLAYER_INVENTORY:UpdateList(GetCurrentInventoryType())
+	currentSelected = self
+end
+
+local function OnDropdownSelect( self )
+	if(not GetCurrentInventoryType()) then return end
+
+	if(not currentSelected) then
+		PLAYER_INVENTORY.inventories[GetCurrentInventoryType()].additionalFilter = self.filterCallback
+	else
+		PLAYER_INVENTORY.inventories[GetCurrentInventoryType()].additionalFilter = function(slot)
+				return self.filterCallback(slot) and currentSelected.filterCallback(slot)
+			end
+	end
+	PLAYER_INVENTORY:UpdateList(GetCurrentInventoryType())
+	currentDropdown = self
 end
 
 function AdvancedFilterGroup:New( groupName )
@@ -107,6 +108,7 @@ function AdvancedFilterGroup:AddSubfilter( name, icon, callback, tooltip )
 	button:SetHandler("OnClicked", function(innerSelf)
 			self:ChangeLabel(tooltip)
 			OnClickedCallback(innerSelf)
+			MoveHighlightToMe(innerSelf)
 		end)
 	button.filterCallback = callback
 	button.isSelected = false
@@ -129,13 +131,33 @@ function AdvancedFilterGroup:AddSubfilter( name, icon, callback, tooltip )
 	table.insert(self.subfilters, subfilter)
 end
 
+function AdvancedFilterGroup:AddDropdownFilter( callbackTable )
+	local dropdown = WINDOW_MANAGER:CreateControlFromVirtual(self.control:GetName() .. "DropdownFilter", self.control, "ZO_ComboBox")
+	self.dropdown = dropdown
+	dropdown:SetAnchor(TOP, self.control, BOTTOM, 10, -2)
+	dropdown:SetHeight(24)
+	local comboBox = dropdown.m_comboBox
+    comboBox:SetSortsItems(false)
+
+	for _,v in ipairs(callbackTable) do
+		comboBox:AddItem(ZO_ComboBox:CreateItemEntry(v.name, function()
+				OnDropdownSelect(v)
+			end))
+	end
+	comboBox:SelectFirstItem()
+    comboBox:SetSelectedItemFont("ZoFontGameSmall")
+    comboBox:SetDropdownFont("ZoFontGameSmall")
+	return dropdown
+end
+
 function AdvancedFilterGroup:ResetToAll()
 	self.label:SetText("ALL")
-	highlightTexture:SetHidden(true)
-	if(currentSelected) then
-		currentSelected.isSelected = false
+	MoveHighlightToMe(self.control:GetNamedChild("AllButton"))
+	if(self.dropdown) then
+		self.dropdown.m_comboBox:SelectFirstItem()
 	end
 	currentSelected = nil
+	currentDropdown = nil
 end
 
 function AdvancedFilterGroup:SetHidden( shouldHide )

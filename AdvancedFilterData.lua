@@ -10,6 +10,15 @@ local function GetFilterCallbackForWeaponType( filterTypes )
 	end
 end
 
+local function GetFilterCallbackForArmorType( filterTypes )
+	return function( slot )
+		for i=1, #filterTypes do
+			local icon = GetItemInfo(slot.bagId, slot.slotIndex)
+			if(string.find(icon, filterTypes[i])) then return true end
+		end
+	end
+end
+
 local function GetFilterCallbackForGear( filterTypes )
 	return function( slot )
 		local result = false
@@ -52,32 +61,39 @@ function AdvancedFilters_InitAllFilters()
 			return callbackA(slot) and not callbackB(slot)
 		end, "Two-Handed")
 	WEAPONS:AddSubfilter("OneHand", [[/esoui/art/progression/icon_dualwield.dds]], GetFilterCallbackForGear({EQUIP_TYPE_ONE_HAND}), "One-Handed")
-	-- WEAPONS:AddSubfilter("All", [[/esoui/art/inventory/inventory_tabicon_all_up.dds]], GetFilterCallback(nil), "All")
+	WEAPONS:AddSubfilter("All", [[/esoui/art/inventory/inventory_tabicon_all_up.dds]], GetFilterCallback(nil), "All")
 
 	local ARMORS = AdvancedFilterGroup:New("Armors")
-	ARMORS:AddSubfilter("Misc", [[/esoui/art/inventory/inventory_tabicon_misc_up.dds]], GetFilterCallbackForGear({EQUIP_TYPE_COSTUME}))
+	ARMORS:AddSubfilter("Misc", [[/esoui/art/inventory/inventory_tabicon_misc_up.dds]], GetFilterCallbackForGear({EQUIP_TYPE_DISGUISE, EQUIP_TYPE_COSTUME}))
 	ARMORS:AddSubfilter("Neck", [[/esoui/art/characterwindow/gearslot_neck.dds]], GetFilterCallbackForGear({EQUIP_TYPE_NECK}))
 	ARMORS:AddSubfilter("Shield", [[/esoui/art/guild/guildhistory_indexicon_guild_up.dds]], GetFilterCallbackForGear({EQUIP_TYPE_OFF_HAND}))
 	ARMORS:AddSubfilter("Ring", [[/esoui/art/charactercreate/charactercreate_accessory_up.dds]], GetFilterCallbackForGear({EQUIP_TYPE_RING}))
 	ARMORS:AddSubfilter("Feet", [[/esoui/art/characterwindow/gearslot_feet.dds]], GetFilterCallbackForGear({EQUIP_TYPE_FEET}))
 	ARMORS:AddSubfilter("Legs", [[/esoui/art/characterwindow/gearslot_legs.dds]], GetFilterCallbackForGear({EQUIP_TYPE_LEGS}))
 	ARMORS:AddSubfilter("Waist", [[/esoui/art/characterwindow/gearslot_belt.dds]], GetFilterCallbackForGear({EQUIP_TYPE_WAIST}))
-	ARMORS:AddSubfilter("Hands", [[/esoui/art/characterwindow/gearslot_hands.dds]], GetFilterCallbackForGear({EQUIP_TYPE_HANDS}))
+	ARMORS:AddSubfilter("Hands", [[/esoui/art/characterwindow/gearslot_hands.dds]], GetFilterCallbackForGear({EQUIP_TYPE_HAND}))
 	ARMORS:AddSubfilter("Shoulders", [[/esoui/art/characterwindow/gearslot_shoulders.dds]], GetFilterCallbackForGear({EQUIP_TYPE_SHOULDERS}))
 	ARMORS:AddSubfilter("Chest", [[/esoui/art/characterwindow/gearslot_chest.dds]], GetFilterCallbackForGear({EQUIP_TYPE_CHEST}))
 	ARMORS:AddSubfilter("Head", [[/esoui/art/inventory/inventory_tabicon_armor_up.dds]], GetFilterCallbackForGear({EQUIP_TYPE_HEAD}))
-	-- ARMORS:AddSubfilter("All", [[/esoui/art/inventory/inventory_tabicon_all_up.dds]], GetFilterCallback(nil))
+	ARMORS:AddSubfilter("All", [[/esoui/art/inventory/inventory_tabicon_all_up.dds]], GetFilterCallback(nil))
+
+	local armorDropdown = ARMORS:AddDropdownFilter( {
+			[1] = { name = "ALL", filterCallback = GetFilterCallback(nil) },
+			[2] = { name = "LIGHT", filterCallback = GetFilterCallbackForArmorType({"_light"}) },
+			[3] = { name = "MEDIUM", filterCallback = GetFilterCallbackForArmorType({"_medium"}) },
+			[4] = { name = "HEAVY", filterCallback = GetFilterCallbackForArmorType({"_heavy"}) }
+		} )
 
 	local CONSUMABLES = AdvancedFilterGroup:New("Consumables")
 	CONSUMABLES:AddSubfilter("AvARepair", [[/esoui/art/inventory/inventory_tabicon_crafting_up.dds]], GetFilterCallback({ITEMTYPE_AVA_REPAIR}), "AvA Repair")
-	CONSUMABLES:AddSubfilter("Container", [[/esoui/art/menubar/menubar_temp_over.dds]], GetFilterCallback({ITEMTYPE_CONTAINER}))
+	CONSUMABLES:AddSubfilter("Container", "AdvancedFilters/assets/container_up.dds", GetFilterCallback({ITEMTYPE_CONTAINER}))
 	CONSUMABLES:AddSubfilter("Scroll", [[/esoui/art/campaign/campaignbonus_scrollicon.dds]], GetFilterCallback({ITEMTYPE_SCROLL}))
 	CONSUMABLES:AddSubfilter("Poison", [[/esoui/art/menubar/menubar_quests_over.dds]], GetFilterCallback({ITEMTYPE_POISON}))
 	CONSUMABLES:AddSubfilter("Potion", [[/esoui/art/inventory/inventory_tabicon_consumables_up.dds]], GetFilterCallback({ITEMTYPE_POTION}))
 	CONSUMABLES:AddSubfilter("Recipe", [[/esoui/art/guild/tabicon_roster_up.dds]], GetFilterCallback({ITEMTYPE_RECIPE}))
 	CONSUMABLES:AddSubfilter("Drink", [[/esoui/art/progression/icon_provisioner.dds]], GetFilterCallback({ITEMTYPE_DRINK}))
 	CONSUMABLES:AddSubfilter("Food", [[/esoui/art/ava/ava_keepstatus_icon_food_neutral.dds]], GetFilterCallback({ITEMTYPE_FOOD}))
-	-- CONSUMABLES:AddSubfilter("All", [[/esoui/art/inventory/inventory_tabicon_all_up.dds]], GetFilterCallback(nil))
+	CONSUMABLES:AddSubfilter("All", [[/esoui/art/inventory/inventory_tabicon_all_up.dds]], GetFilterCallback(nil))
 
 	local MATERIALS = AdvancedFilterGroup:New("Materials")
 	MATERIALS:AddSubfilter("ArmorTrait", [[/esoui/art/lfg/lfg_tabicon_mygroup_up.dds]], GetFilterCallback({ITEMTYPE_ARMOR_TRAIT}), "Armor Trait")
@@ -89,7 +105,7 @@ function AdvancedFilters_InitAllFilters()
 	MATERIALS:AddSubfilter("Woodworking", [[/esoui/art/ava/ava_keepstatus_tabicon_wood_inactive.dds]], GetFilterCallback({ITEMTYPE_WOODWORKING_MATERIAL, ITEMTYPE_WOODWORKING_RAW_MATERIAL, ITEMTYPE_WOODWORKING_BOOSTER}))
 	MATERIALS:AddSubfilter("Clothier", [[/esoui/art/characterwindow/gearslot_tabard.dds]], GetFilterCallback({ITEMTYPE_CLOTHIER_MATERIAL, ITEMTYPE_CLOTHIER_RAW_MATERIAL, ITEMTYPE_CLOTHIER_BOOSTER}))
 	MATERIALS:AddSubfilter("Blacksmithing", [[/esoui/art/inventory/inventory_tabicon_crafting_up.dds]], GetFilterCallback({ITEMTYPE_BLACKSMITHING_MATERIAL, ITEMTYPE_BLACKSMITHING_RAW_MATERIAL, ITEMTYPE_BLACKSMITHING_BOOSTER}))
-	-- MATERIALS:AddSubfilter("All", [[/esoui/art/inventory/inventory_tabicon_all_up.dds]], GetFilterCallback(nil))
+	MATERIALS:AddSubfilter("All", [[/esoui/art/inventory/inventory_tabicon_all_up.dds]], GetFilterCallback(nil))
 
 	local MISCELLANEOUS = AdvancedFilterGroup:New("Miscellaneous")
 	MISCELLANEOUS:AddSubfilter("Trophy", [[/esoui/art/campaign/campaign_tabicon_leaderboard_up.dds]], GetFilterCallback({ITEMTYPE_TROPHY}))
@@ -98,7 +114,7 @@ function AdvancedFilters_InitAllFilters()
 	MISCELLANEOUS:AddSubfilter("JewelryGlyph", [[/esoui/art/guild/guild_indexicon_member_up.dds]], GetFilterCallback({ITEMTYPE_GLYPH_JEWELRY}), "Jewelry Glyph")
 	MISCELLANEOUS:AddSubfilter("ArmorGlyph", [[/esoui/art/guild/guild_indexicon_officer_up.dds]], GetFilterCallback({ITEMTYPE_GLYPH_ARMOR}), "Armor Glyph")
 	MISCELLANEOUS:AddSubfilter("WeaponGlyph", [[/esoui/art/guild/guild_indexicon_leader_up.dds]], GetFilterCallback({ITEMTYPE_GLYPH_WEAPON}), "Weapon Glyph")
-	-- MISCELLANEOUS:AddSubfilter("All", [[/esoui/art/inventory/inventory_tabicon_all_up.dds]], GetFilterCallback(nil))
+	MISCELLANEOUS:AddSubfilter("All", [[/esoui/art/inventory/inventory_tabicon_all_up.dds]], GetFilterCallback(nil))
 
 	return WEAPONS,ARMORS,CONSUMABLES,MATERIALS,MISCELLANEOUS
 end
