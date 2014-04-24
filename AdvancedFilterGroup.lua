@@ -25,32 +25,40 @@ local function MoveHighlightToMe( self )
 	highlightTexture:SetHidden(false)
 end
 
+local function SetUpCallbackFilter( self )
+	PLAYER_INVENTORY.inventories[GetCurrentInventoryType()].additionalFilter = function(slot)
+			local result = true
+
+			if(PLAYER_INVENTORY.appliedLayout and PLAYER_INVENTORY.appliedLayout.defaultAdditionalFilter) then
+				result = result and PLAYER_INVENTORY.appliedLayout.defaultAdditionalFilter(slot)
+			end
+
+			if(currentDropdown) then
+				result = result and currentDropdown.filterCallback(slot)
+			end
+
+			if(self.filterCallback) then
+				return result and self.filterCallback(slot)
+			else
+				return result
+			end
+		end
+end
+
 local function OnClickedCallback( self )
 	if(not GetCurrentInventoryType()) then return end
-
-	if(not currentDropdown) then
-		PLAYER_INVENTORY.inventories[GetCurrentInventoryType()].additionalFilter = self.filterCallback
-	else
-		PLAYER_INVENTORY.inventories[GetCurrentInventoryType()].additionalFilter = function(slot)
-				return self.filterCallback(slot) and currentDropdown.filterCallback(slot)
-			end
-	end
-	PLAYER_INVENTORY:UpdateList(GetCurrentInventoryType())
 	currentSelected = self
+
+	SetUpCallbackFilter(self)
+	PLAYER_INVENTORY:UpdateList(GetCurrentInventoryType())
 end
 
 local function OnDropdownSelect( self )
 	if(not GetCurrentInventoryType()) then return end
-
-	if(not currentSelected) then
-		PLAYER_INVENTORY.inventories[GetCurrentInventoryType()].additionalFilter = self.filterCallback
-	else
-		PLAYER_INVENTORY.inventories[GetCurrentInventoryType()].additionalFilter = function(slot)
-				return self.filterCallback(slot) and currentSelected.filterCallback(slot)
-			end
-	end
-	PLAYER_INVENTORY:UpdateList(GetCurrentInventoryType())
 	currentDropdown = self
+
+	SetUpCallbackFilter(self)
+	PLAYER_INVENTORY:UpdateList(GetCurrentInventoryType())
 end
 
 function AdvancedFilterGroup:New( groupName )
@@ -115,6 +123,7 @@ function AdvancedFilterGroup:AddSubfilter( name, icon, callback, tooltip )
 	--button:SetHandler("Mouseover", tooltip with name)
 
 	local texture = WINDOW_MANAGER:CreateControl( subfilter:GetName() .. "Texture", subfilter, CT_TEXTURE )
+	-- texutre:SetBlendMode(0)
 	texture:SetAnchor(CENTER, subfilter, CENTER)
 	texture:SetDimensions(ICON_SIZE, ICON_SIZE)
 	texture:SetTexture(icon)
@@ -151,13 +160,18 @@ function AdvancedFilterGroup:AddDropdownFilter( callbackTable )
 end
 
 function AdvancedFilterGroup:ResetToAll()
-	self.label:SetText("ALL")
-	MoveHighlightToMe(self.control:GetNamedChild("AllButton"))
-	if(self.dropdown) then
-		self.dropdown.m_comboBox:SelectFirstItem()
+	if(self) then 
+		self.label:SetText("ALL")
+		MoveHighlightToMe(self.control:GetNamedChild("AllButton"))
+		if(self.dropdown) then
+			self.dropdown.m_comboBox:SelectFirstItem()
+		end
 	end
 	currentSelected = nil
 	currentDropdown = nil
+
+	OnClickedCallback(self)
+	PLAYER_INVENTORY:UpdateList(GetCurrentInventoryType())
 end
 
 function AdvancedFilterGroup:SetHidden( shouldHide )

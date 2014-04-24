@@ -65,24 +65,29 @@ function AdvancedFilters_InitAllFilters()
 
 	local ARMORS = AdvancedFilterGroup:New("Armors")
 	ARMORS:AddSubfilter("Misc", [[/esoui/art/inventory/inventory_tabicon_misc_up.dds]], GetFilterCallbackForGear({EQUIP_TYPE_DISGUISE, EQUIP_TYPE_COSTUME}))
-	ARMORS:AddSubfilter("Neck", [[/esoui/art/characterwindow/gearslot_neck.dds]], GetFilterCallbackForGear({EQUIP_TYPE_NECK}))
+	ARMORS:AddSubfilter("Jewelry", [[/esoui/art/charactercreate/charactercreate_accessory_up.dds]], GetFilterCallbackForGear({EQUIP_TYPE_RING, EQUIP_TYPE_NECK}))
 	ARMORS:AddSubfilter("Shield", [[/esoui/art/guild/guildhistory_indexicon_guild_up.dds]], GetFilterCallbackForGear({EQUIP_TYPE_OFF_HAND}))
-	ARMORS:AddSubfilter("Ring", [[/esoui/art/charactercreate/charactercreate_accessory_up.dds]], GetFilterCallbackForGear({EQUIP_TYPE_RING}))
-	ARMORS:AddSubfilter("Feet", [[/esoui/art/characterwindow/gearslot_feet.dds]], GetFilterCallbackForGear({EQUIP_TYPE_FEET}))
-	ARMORS:AddSubfilter("Legs", [[/esoui/art/characterwindow/gearslot_legs.dds]], GetFilterCallbackForGear({EQUIP_TYPE_LEGS}))
-	ARMORS:AddSubfilter("Waist", [[/esoui/art/characterwindow/gearslot_belt.dds]], GetFilterCallbackForGear({EQUIP_TYPE_WAIST}))
-	ARMORS:AddSubfilter("Hands", [[/esoui/art/characterwindow/gearslot_hands.dds]], GetFilterCallbackForGear({EQUIP_TYPE_HAND}))
-	ARMORS:AddSubfilter("Shoulders", [[/esoui/art/characterwindow/gearslot_shoulders.dds]], GetFilterCallbackForGear({EQUIP_TYPE_SHOULDERS}))
-	ARMORS:AddSubfilter("Chest", [[/esoui/art/characterwindow/gearslot_chest.dds]], GetFilterCallbackForGear({EQUIP_TYPE_CHEST}))
-	ARMORS:AddSubfilter("Head", [[/esoui/art/inventory/inventory_tabicon_armor_up.dds]], GetFilterCallbackForGear({EQUIP_TYPE_HEAD}))
+	ARMORS:AddSubfilter("Light", [[/esoui/art/charactercreate/charactercreate_bodyicon_up.dds]], GetFilterCallbackForArmorType({"_light"}))
+	ARMORS:AddSubfilter("Medium", [[/esoui/art/campaign/overview_indexicon_scoring_up.dds]], GetFilterCallbackForArmorType({"_medium"}))
+	ARMORS:AddSubfilter("Heavy", [[/esoui/art/inventory/inventory_tabicon_armor_up.dds]], GetFilterCallbackForArmorType({"_heavy"}))
+	-- ARMORS:AddSubfilter("Neck", [[/esoui/art/characterwindow/gearslot_neck.dds]], GetFilterCallbackForGear({EQUIP_TYPE_NECK}))
+	-- ARMORS:AddSubfilter("Shield", [[/esoui/art/guild/guildhistory_indexicon_guild_up.dds]], GetFilterCallbackForGear({EQUIP_TYPE_OFF_HAND}))
+	-- ARMORS:AddSubfilter("Ring", [[/esoui/art/charactercreate/charactercreate_accessory_up.dds]], GetFilterCallbackForGear({EQUIP_TYPE_RING}))
+	-- ARMORS:AddSubfilter("Feet", [[/esoui/art/characterwindow/gearslot_feet.dds]], GetFilterCallbackForGear({EQUIP_TYPE_FEET}))
+	-- ARMORS:AddSubfilter("Legs", [[/esoui/art/characterwindow/gearslot_legs.dds]], GetFilterCallbackForGear({EQUIP_TYPE_LEGS}))
+	-- ARMORS:AddSubfilter("Waist", [[/esoui/art/characterwindow/gearslot_belt.dds]], GetFilterCallbackForGear({EQUIP_TYPE_WAIST}))
+	-- ARMORS:AddSubfilter("Hands", [[/esoui/art/characterwindow/gearslot_hands.dds]], GetFilterCallbackForGear({EQUIP_TYPE_HAND}))
+	-- ARMORS:AddSubfilter("Shoulders", [[/esoui/art/characterwindow/gearslot_shoulders.dds]], GetFilterCallbackForGear({EQUIP_TYPE_SHOULDERS}))
+	-- ARMORS:AddSubfilter("Chest", [[/esoui/art/characterwindow/gearslot_chest.dds]], GetFilterCallbackForGear({EQUIP_TYPE_CHEST}))
+	-- ARMORS:AddSubfilter("Head", [[/esoui/art/inventory/inventory_tabicon_armor_up.dds]], GetFilterCallbackForGear({EQUIP_TYPE_HEAD}))
 	ARMORS:AddSubfilter("All", [[/esoui/art/inventory/inventory_tabicon_all_up.dds]], GetFilterCallback(nil))
 
-	local armorDropdown = ARMORS:AddDropdownFilter( {
-			[1] = { name = "ALL", filterCallback = GetFilterCallback(nil) },
-			[2] = { name = "LIGHT", filterCallback = GetFilterCallbackForArmorType({"_light"}) },
-			[3] = { name = "MEDIUM", filterCallback = GetFilterCallbackForArmorType({"_medium"}) },
-			[4] = { name = "HEAVY", filterCallback = GetFilterCallbackForArmorType({"_heavy"}) }
-		} )
+	-- local armorDropdown = ARMORS:AddDropdownFilter( {
+	-- 		[1] = { name = "ALL", filterCallback = GetFilterCallback(nil) },
+	-- 		[2] = { name = "LIGHT", filterCallback = GetFilterCallbackForArmorType({"_light"}) },
+	-- 		[3] = { name = "MEDIUM", filterCallback = GetFilterCallbackForArmorType({"_medium"}) },
+	-- 		[4] = { name = "HEAVY", filterCallback = GetFilterCallbackForArmorType({"_heavy"}) }
+	-- 	} )
 
 	local CONSUMABLES = AdvancedFilterGroup:New("Consumables")
 	CONSUMABLES:AddSubfilter("AvARepair", [[/esoui/art/inventory/inventory_tabicon_crafting_up.dds]], GetFilterCallback({ITEMTYPE_AVA_REPAIR}), "AvA Repair")
