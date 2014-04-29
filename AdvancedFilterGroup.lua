@@ -18,6 +18,16 @@ local currentDropdown = nil
 
 AdvancedFilterGroup = ZO_Object:Subclass()
 
+local function AdvancedFilters_GetLanguage()
+	local lang = GetCVar("language.2")
+
+	--check for supported languages
+	if(lang == "de" or lang == "en" or lang == "fr") then return lang end
+
+	--return english if not supported
+	return "en"
+end
+
 local function MoveHighlightToMe( self )
 	highlightTexture:ClearAnchors()
 	highlightTexture:SetParent(self)
@@ -37,16 +47,46 @@ local function SetUpCallbackFilter( self )
 				result = result and currentDropdown.filterCallback(slot)
 			end
 
-			if(self.filterCallback) then
-				return result and self.filterCallback(slot)
+			if(currentSelected.filterCallback) then
+				return result and currentSelected.filterCallback(slot)
 			else
 				return result
 			end
 		end
 end
 
+local function CycleTextures( self )
+	if(self == currentSelected) then return end
+
+	if(self.upTexture) then
+		highlightTexture:SetHidden(true)
+		self:GetNamedChild("Flash"):SetHidden(false)
+		self:GetNamedChild("Texture"):SetTexture(self.downTexture)
+		self:SetScale(1.5)
+		self:SetMouseEnabled(false)
+	end
+
+	if(currentSelected and currentSelected.upTexture) then 
+		currentSelected:GetNamedChild("Flash"):SetHidden(true)
+		currentSelected:GetNamedChild("Texture"):SetTexture(currentSelected.upTexture)
+		currentSelected:SetScale(1)
+		currentSelected:SetMouseEnabled(true)
+	end
+end
+
 local function OnClickedCallback( self )
-	if(not GetCurrentInventoryType()) then return end
+	if(not GetCurrentInventoryType() or self == currentSelected) then return end
+
+	if(self.filterCallback and currentSelected and currentSelected.filterCallback and not (self == currentSelected)) then 
+		local dropdown = currentSelected:GetParent().dropdown
+		if(dropdown) then
+			dropdown.m_comboBox:SelectFirstItem()
+			dropdown:SetHidden(true)
+		end
+	end
+
+	CycleTextures(self)
+
 	currentSelected = self
 
 	SetUpCallbackFilter(self)
@@ -85,7 +125,13 @@ function AdvancedFilterGroup:Init( groupName )
 	self.label:SetVerticalAlignment(CENTER)
 	-- self.label:SetHorizontalAlignment(LEFT)
 	self.label:SetDimensions(STARTX - 12, SUBFILTERHEIGHT)
-	self.label:SetText(string.upper("All"))
+	self.label:SetText(string.upper(AF_Strings[AdvancedFilters_GetLanguage()].TOOLTIPS["All"]))
+
+	self.divider = WINDOW_MANAGER:CreateControlFromVirtual(self.control:GetName() .. "Divider", self.control, "ZO_WideHorizontalDivider")
+	self.divider:SetHidden(false)
+	self.divider:SetAnchor(TOPLEFT, self.control, BOTTOMLEFT)
+	self.divider:SetAnchor(TOPRIGHT, self.control, BOTTOMRIGHT)
+	self.divider:SetAlpha(0.3)
 
 	if(not highlightTexture) then
 		highlightTexture = WINDOW_MANAGER:CreateControl("AdvancedFilterGroupHighlight", self.control, CT_TEXTURE)
@@ -102,9 +148,11 @@ function AdvancedFilterGroup:ChangeLabel( text )
 	self.label:SetText(string.upper(text))
 end
 
-function AdvancedFilterGroup:AddSubfilter( name, icon, callback, tooltip )
+function AdvancedFilterGroup:AddSubfilter( name, icon, callback, dropdownCallbacks )
+	local tooltipSet = AF_Strings[AdvancedFilters_GetLanguage()].TOOLTIPS
+
+
 	local anchorX = -STARTX + #self.subfilters * -ICON_SIZE
-	if(not tooltip) then tooltip = name end
 
 	local subfilter = WINDOW_MANAGER:CreateControl( self.control:GetName() .. name, self.control, CT_CONTROL )
 	subfilter:SetAnchor(CENTER, self.control, RIGHT, anchorX, 0)
@@ -114,45 +162,74 @@ function AdvancedFilterGroup:AddSubfilter( name, icon, callback, tooltip )
 	button:SetAnchor(TOPLEFT, subfilter, TOPLEFT)
 	button:SetDimensions(ICON_SIZE, ICON_SIZE)
 	button:SetHandler("OnClicked", function(innerSelf)
-			self:ChangeLabel(tooltip)
-			OnClickedCallback(innerSelf)
+			if(innerSelf == currentSelected) then return end
+			self:ChangeLabel(tooltipSet[name])
+			if(subfilter.dropdown) then
+				subfilter.dropdown:SetHidden(false)
+			end
 			MoveHighlightToMe(innerSelf)
+			OnClickedCallback(innerSelf)
 		end)
 	button.filterCallback = callback
 	button.isSelected = false
-	--button:SetHandler("Mouseover", tooltip with name)
+	button.upTexture = icon.upTexture
+	button.downTexture = icon.downTexture
 
-	local texture = WINDOW_MANAGER:CreateControl( subfilter:GetName() .. "Texture", subfilter, CT_TEXTURE )
-	-- texutre:SetBlendMode(0)
+	local texture = WINDOW_MANAGER:CreateControl( button:GetName() .. "Texture", button, CT_TEXTURE )
 	texture:SetAnchor(CENTER, subfilter, CENTER)
 	texture:SetDimensions(ICON_SIZE, ICON_SIZE)
-	texture:SetTexture(icon)
+	texture:SetTexture(icon.upTexture or icon)
+
+	local flash
+	if(icon.flash) then
+		flash = WINDOW_MANAGER:CreateControl( button:GetName() .. "Flash", button, CT_TEXTURE)
+		flash:SetAnchor(CENTER, subfilter, CENTER)
+		flash:SetDimensions(ICON_SIZE, ICON_SIZE)
+		flash:SetTexture(icon.flash)
+		flash:SetHidden(true)
+	end
 
 	button:SetHandler("OnMouseEnter", function(self)
-		ZO_Tooltips_ShowTextTooltip(self, TOP, tooltip)
+		ZO_Tooltips_ShowTextTooltip(self, TOP, tooltipSet[name])
+		if(flash) then
+			flash:SetHidden(false)
+		end
 	end)
 	button:SetHandler("OnMouseExit", function(self)
 		ZO_Tooltips_HideTextTooltip()
+		if(flash) then
+			flash:SetHidden(true)
+		end
 	end)
+
+	if(dropdownCallbacks) then
+		local dropdown = self:AddDropdownFilter( subfilter, dropdownCallbacks )
+	end
 
 	-- subfilter:SetHidden(true)
 
 	table.insert(self.subfilters, subfilter)
 end
 
-function AdvancedFilterGroup:AddDropdownFilter( callbackTable )
-	local dropdown = WINDOW_MANAGER:CreateControlFromVirtual(self.control:GetName() .. "DropdownFilter", self.control, "ZO_ComboBox")
-	self.dropdown = dropdown
-	dropdown:SetAnchor(TOP, self.control, BOTTOM, 10, -2)
+function AdvancedFilterGroup:AddDropdownFilter( parent, callbackTable )
+	local tooltipSet = AF_Strings[AdvancedFilters_GetLanguage()].TOOLTIPS
+	local dropdown = WINDOW_MANAGER:CreateControlFromVirtual(parent:GetName() .. "DropdownFilter", parent, "ZO_ComboBox")
+
+	parent.dropdown = dropdown
+	dropdown:SetHidden(true)
+	dropdown:SetAnchor(LEFT, self.control, LEFT, 32)
 	dropdown:SetHeight(24)
 	local comboBox = dropdown.m_comboBox
     comboBox:SetSortsItems(false)
 
 	for _,v in ipairs(callbackTable) do
-		comboBox:AddItem(ZO_ComboBox:CreateItemEntry(v.name, function()
+		comboBox:AddItem(ZO_ComboBox:CreateItemEntry(tooltipSet[v.name], function()
 				OnDropdownSelect(v)
 			end))
 	end
+
+	dropdown:SetHandler("OnHidden", function() d("test") end)
+
 	comboBox:SelectFirstItem()
     comboBox:SetSelectedItemFont("ZoFontGameSmall")
     comboBox:SetDropdownFont("ZoFontGameSmall")
@@ -162,15 +239,20 @@ end
 function AdvancedFilterGroup:ResetToAll()
 	if(self) then 
 		self.label:SetText("ALL")
-		MoveHighlightToMe(self.control:GetNamedChild("AllButton"))
-		if(self.dropdown) then
-			self.dropdown.m_comboBox:SelectFirstItem()
+		-- MoveHighlightToMe(self.control:GetNamedChild("AllButton"))
+		-- self.control:GetNamedChild("AllButtonTexture"):SetTexture(AF_TextureMap.ALL.downTexture)
+		-- self.control:GetNamedChild("AllButton"):SetScale(1.5)
+		if(currentSelected and currentSelected.filterCallback and currentSelected:GetParent().dropdown) then
+			currentSelected:GetParent().dropdown.m_comboBox:SelectFirstItem()
+			currentSelected:GetParent().dropdown:SetHidden(true)
 		end
+		OnClickedCallback(self.control:GetNamedChild("AllButton"))
+		self.control:GetNamedChild("AllButtonFlash"):SetHidden(true)
+		-- currentSelected = self.control:GetNamedChild("AllButton")
 	end
-	currentSelected = nil
-	currentDropdown = nil
+	-- currentDropdown = nil
 
-	OnClickedCallback(self)
+	-- OnClickedCallback(self)
 	PLAYER_INVENTORY:UpdateList(GetCurrentInventoryType())
 end
 

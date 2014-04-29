@@ -1,10 +1,12 @@
 ## Title: Advanced Filters
 ## Author: ingeniousclown
-## Version: 0.2.1
+## Version: 0.3.2
 ## APIVersion: 100003
 ## OptionalDependsOn: ItemSaver
 ## OptionalDependsOn: InventoryGridView
 
+AF_Strings.lua
+AF_TextureMap.lua
 AdvancedFilterGroup.lua
 AdvancedFilterData.lua
 AdvancedFilters.lua

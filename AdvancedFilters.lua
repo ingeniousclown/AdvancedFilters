@@ -1,14 +1,14 @@
 ------------------------------------------------------------------
 --AdvancedFilters.lua
 --Author: ingeniousclown
---v0.2.1
+--v0.3.2
 
 --Advanced Filters adds a line of subfilters to the inventory
 --screen.
 ------------------------------------------------------------------
 
 
-local ADV_FILTER_HEIGHT = 30
+local ADV_FILTER_HEIGHT = 40
 local oldY = nil
 
 local WEAPONS, ARMOR, CONSUMABLES, MATERIALS, MISCELLANOUS
@@ -21,6 +21,7 @@ local isRearranged = false
 local BAGS = ZO_PlayerInventoryBackpack
 local BANK = ZO_PlayerBankBackpack
 local GUILDBANK = ZO_GuildBankBackpack
+local QUEST = ZO_PlayerInventoryQuest
 
 local currentSubFilter = {
 	[INVENTORY_BACKPACK] = nil,
@@ -43,7 +44,7 @@ function GetCurrentInventoryType()
 end
 
 local function RearrangeControls( self )
-	if(not (self == BAGS or self == BANK or self == GUILDBANK)) then return end
+	if(not (self == BAGS or self == BANK or self == GUILDBANK or self == QUEST)) then return end
 
 	if (not self.oldY) then
 		local sortBy = self:GetParent():GetNamedChild("SortBy")
@@ -55,9 +56,15 @@ local function RearrangeControls( self )
 		or self.currentFilter == ITEMFILTERTYPE_ARMOR
 		or self.currentFilter == ITEMFILTERTYPE_CONSUMABLE
 		or self.currentFilter == ITEMFILTERTYPE_CRAFTING
-		or self.currentFilter == ITEMFILTERTYPE_MISCELLANEOUS )) then
-		if(self.isRearranged) then
-			self.isRearranged = false
+		or self.currentFilter == ITEMFILTERTYPE_MISCELLANEOUS )
+		or self == QUEST) then
+		if(self.isRearranged or (self == QUEST and BAGS.isRearranged)) then
+			if(self ~= QUEST) then
+				self.isRearranged = false
+			else
+				BAGS.isRearranged = false
+				self = BAGS
+			end
 			local sortBy = self:GetParent():GetNamedChild("SortBy")
 			sortBy:ClearAnchors()
 			sortBy:SetAnchor(TOPLEFT, self:GetParent(), TOPLEFT, 0, self.oldY)
@@ -69,7 +76,9 @@ local function RearrangeControls( self )
 			contents:SetHeight(contents:GetDesiredHeight() + ADV_FILTER_HEIGHT)
 
 			ZO_ScrollList_SetHeight(self, self:GetHeight())
-			PLAYER_INVENTORY:UpdateList(self.inventoryType)
+			if(self ~= QUEST) then
+				PLAYER_INVENTORY:UpdateList(self.inventoryType)
+			end
 		end
 		return
 	end
@@ -97,6 +106,22 @@ local function SetFilterParent( parent )
 		v.control:SetAnchor(TOPLEFT, inventory, TOPLEFT, 0, v.offsetY)
 		v.control:SetHidden(true)
 	end
+end
+
+--this handles the sudden change between bags
+--because all the filter bars are shared, they would be hidden upon changing inventories
+local function InventoryShown( self )
+	if(currentBag == self) then return end
+
+	self = self:GetNamedChild("Backpack")
+	SetFilterParent(self)
+	if(self.currentFilter) then
+		subfilterRows[self.currentFilter]:SetHidden(false)
+		subfilterRows[self.currentFilter]:ResetToAll()
+	end
+
+	currentInventoryType = self.inventoryType
+	currentBag = self
 end
 
 local function ChangeFilter( self, filterTab )
@@ -157,11 +182,32 @@ local function AdvancedFilters_Loaded(eventCode, addOnName)
 	BANK.inventoryType = INVENTORY_BANK
 	GUILDBANK.inventoryType = INVENTORY_GUILD_BANK
 
+	local bagSearch = ZO_PlayerInventorySearchBox
+	bagSearch:ClearAnchors()
+	bagSearch:SetAnchor(BOTTOMLEFT, ZO_PlayerInventory, TOPLEFT, 36, -8)
+	bagSearch:SetHidden(false)
+
+	local bankSearch = ZO_PlayerBankSearchBox
+	bankSearch:ClearAnchors()
+	bankSearch:SetAnchor(BOTTOMLEFT, ZO_PlayerBank, TOPLEFT, 36, -8)
+	bankSearch:SetHidden(false)
+	bankSearch:SetWidth(bagSearch:GetWidth())
+
+	local guildBankSearch = ZO_GuildBankSearchBox
+	guildBankSearch:ClearAnchors()
+	guildBankSearch:SetAnchor(BOTTOMLEFT, ZO_GuildBank, TOPLEFT, 36, -8)
+	guildBankSearch:SetHidden(false)
+	guildBankSearch:SetWidth(bagSearch:GetWidth())
+
 	currentInventoryType = INVENTORY_BACKPACK
 
 	BACKPACK_MAIL_LAYOUT_FRAGMENT.layoutData.defaultAdditionalFilter = BACKPACK_MAIL_LAYOUT_FRAGMENT.layoutData.additionalFilter
 	BACKPACK_PLAYER_TRADE_LAYOUT_FRAGMENT.layoutData.defaultAdditionalFilter = BACKPACK_PLAYER_TRADE_LAYOUT_FRAGMENT.layoutData.additionalFilter
 	BACKPACK_STORE_LAYOUT_FRAGMENT.layoutData.defaultAdditionalFilter = BACKPACK_STORE_LAYOUT_FRAGMENT.layoutData.additionalFilter
+
+	ZO_PreHook(BAGS:GetParent(), "SetHidden", InventoryShown)
+	ZO_PreHook(BANK:GetParent(), "SetHidden", InventoryShown)
+	ZO_PreHook(GUILDBANK:GetParent(), "SetHidden", InventoryShown)
 end
 
 local function AdvancedFilters_Initialized()
