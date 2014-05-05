@@ -1,3 +1,5 @@
+local libFilters = LibStub("libFilters")
+
 
 local index = 0
 local function GetNextIndex()
@@ -15,6 +17,9 @@ local highlightTexture = nil
 local defaultCallback = nil
 local currentSelected = nil
 local currentDropdown = nil
+
+local BUTTON_STRING = "AdvancedFilters_Button_Filter"
+local DROPDOWN_STRING = "AdvancedFilters_Dropdown_Filter"
 
 AdvancedFilterGroup = ZO_Object:Subclass()
 
@@ -35,24 +40,13 @@ local function MoveHighlightToMe( self )
 	highlightTexture:SetHidden(false)
 end
 
-local function SetUpCallbackFilter( self )
-	PLAYER_INVENTORY.inventories[GetCurrentInventoryType()].additionalFilter = function(slot)
-			local result = true
+local function SetUpCallbackFilter( self, filterString )
+	local laf = libFilters:InventoryTypeToLAF(GetCurrentInventoryType())
 
-			if(PLAYER_INVENTORY.appliedLayout and PLAYER_INVENTORY.appliedLayout.defaultAdditionalFilter) then
-				result = result and PLAYER_INVENTORY.appliedLayout.defaultAdditionalFilter(slot)
-			end
-
-			if(currentDropdown) then
-				result = result and currentDropdown.filterCallback(slot)
-			end
-
-			if(currentSelected.filterCallback) then
-				return result and currentSelected.filterCallback(slot)
-			else
-				return result
-			end
-		end
+	--first, clear current filter
+	libFilters:UnregisterFilter(filterString)
+	--then register new one
+	libFilters:RegisterFilter(filterString, laf, self.filterCallback)
 end
 
 local function CycleTextures( self )
@@ -89,16 +83,16 @@ local function OnClickedCallback( self )
 
 	currentSelected = self
 
-	SetUpCallbackFilter(self)
-	PLAYER_INVENTORY:UpdateList(GetCurrentInventoryType())
+	SetUpCallbackFilter(self, BUTTON_STRING)
+	-- PLAYER_INVENTORY:UpdateList(GetCurrentInventoryType())
 end
 
 local function OnDropdownSelect( self )
 	if(not GetCurrentInventoryType()) then return end
 	currentDropdown = self
 
-	SetUpCallbackFilter(self)
-	PLAYER_INVENTORY:UpdateList(GetCurrentInventoryType())
+	SetUpCallbackFilter(self, DROPDOWN_STRING)
+	-- PLAYER_INVENTORY:UpdateList(GetCurrentInventoryType())
 end
 
 function AdvancedFilterGroup:New( groupName )
@@ -238,6 +232,8 @@ end
 
 function AdvancedFilterGroup:ResetToAll()
 	if(self) then 
+		libFilters:UnregisterFilter(BUTTON_STRING)
+		libFilters:UnregisterFilter(DROPDOWN_STRING)
 		self.label:SetText("ALL")
 		-- MoveHighlightToMe(self.control:GetNamedChild("AllButton"))
 		-- self.control:GetNamedChild("AllButtonTexture"):SetTexture(AF_TextureMap.ALL.downTexture)
@@ -246,14 +242,15 @@ function AdvancedFilterGroup:ResetToAll()
 			currentSelected:GetParent().dropdown.m_comboBox:SelectFirstItem()
 			currentSelected:GetParent().dropdown:SetHidden(true)
 		end
-		OnClickedCallback(self.control:GetNamedChild("AllButton"))
+		local allBtnHandler = self.control:GetNamedChild("AllButton"):GetHandler("OnClicked")
+		allBtnHandler(self.control:GetNamedChild("AllButton"));
 		self.control:GetNamedChild("AllButtonFlash"):SetHidden(true)
 		-- currentSelected = self.control:GetNamedChild("AllButton")
 	end
 	-- currentDropdown = nil
 
 	-- OnClickedCallback(self)
-	PLAYER_INVENTORY:UpdateList(GetCurrentInventoryType())
+	-- PLAYER_INVENTORY:UpdateList(GetCurrentInventoryType())
 end
 
 function AdvancedFilterGroup:SetHidden( shouldHide )

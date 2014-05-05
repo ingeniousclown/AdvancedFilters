@@ -1,7 +1,7 @@
 ------------------------------------------------------------------
 --AdvancedFilters.lua
 --Author: ingeniousclown
---v0.3.2
+--v0.3.3
 
 --Advanced Filters adds a line of subfilters to the inventory
 --screen.
@@ -143,9 +143,9 @@ local function ChangeFilter( self, filterTab )
 		subfilterRows[currentBag.currentFilter]:ResetToAll()
 	end
 
-	if(PLAYER_INVENTORY.appliedLayout) then
-		PLAYER_INVENTORY.appliedLayout.additionalFilter = PLAYER_INVENTORY.appliedLayout.defaultAdditionalFilter
-	end
+	-- if(PLAYER_INVENTORY.appliedLayout) then
+	-- 	PLAYER_INVENTORY.appliedLayout.additionalFilter = PLAYER_INVENTORY.appliedLayout.defaultAdditionalFilter
+	-- end
 	local newFilter = self:GetTabFilterInfo(inventoryType, filterTab)
 	
 	if( not (newFilter == ITEMFILTERTYPE_WEAPONS
@@ -201,13 +201,13 @@ local function AdvancedFilters_Loaded(eventCode, addOnName)
 
 	currentInventoryType = INVENTORY_BACKPACK
 
-	BACKPACK_MAIL_LAYOUT_FRAGMENT.layoutData.defaultAdditionalFilter = BACKPACK_MAIL_LAYOUT_FRAGMENT.layoutData.additionalFilter
-	BACKPACK_PLAYER_TRADE_LAYOUT_FRAGMENT.layoutData.defaultAdditionalFilter = BACKPACK_PLAYER_TRADE_LAYOUT_FRAGMENT.layoutData.additionalFilter
-	BACKPACK_STORE_LAYOUT_FRAGMENT.layoutData.defaultAdditionalFilter = BACKPACK_STORE_LAYOUT_FRAGMENT.layoutData.additionalFilter
+	-- BACKPACK_MAIL_LAYOUT_FRAGMENT.layoutData.defaultAdditionalFilter = BACKPACK_MAIL_LAYOUT_FRAGMENT.layoutData.additionalFilter
+	-- BACKPACK_PLAYER_TRADE_LAYOUT_FRAGMENT.layoutData.defaultAdditionalFilter = BACKPACK_PLAYER_TRADE_LAYOUT_FRAGMENT.layoutData.additionalFilter
+	-- BACKPACK_STORE_LAYOUT_FRAGMENT.layoutData.defaultAdditionalFilter = BACKPACK_STORE_LAYOUT_FRAGMENT.layoutData.additionalFilter
 
-	ZO_PreHook(BAGS:GetParent(), "SetHidden", InventoryShown)
-	ZO_PreHook(BANK:GetParent(), "SetHidden", InventoryShown)
-	ZO_PreHook(GUILDBANK:GetParent(), "SetHidden", InventoryShown)
+	-- ZO_PreHook(BAGS:GetParent(), "SetHidden", InventoryShown)
+	-- ZO_PreHook(BANK:GetParent(), "SetHidden", InventoryShown)
+	-- ZO_PreHook(GUILDBANK:GetParent(), "SetHidden", InventoryShown)
 end
 
 local function AdvancedFilters_Initialized()

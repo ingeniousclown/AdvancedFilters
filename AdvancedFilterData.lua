@@ -77,6 +77,8 @@ function AdvancedFilters_InitAllFilters()
 	local mediumArmorDropdownCallbacks = ZO_DeepTableCopy(lightArmorDropdownCallbacks, mediumArmorDropdownCallbacks)
 	local heavyArmorDropdownCallbacks = ZO_DeepTableCopy(lightArmorDropdownCallbacks, heavyArmorDropdownCallbacks)
 
+	local allArmorDropdownCallbacks = ZO_DeepTableCopy(lightArmorDropdownCallbacks, allArmorDropdownCallbacks)
+
 	local jewelryDropdownCallbacks = {
 		[1] = { name = "All", filterCallback = GetFilterCallback(nil) },
 		[2] = { name = "Ring", filterCallback = GetFilterCallbackForGear({EQUIP_TYPE_RING}) },
@@ -94,7 +96,7 @@ function AdvancedFilters_InitAllFilters()
 						mediumArmorDropdownCallbacks)
 	ARMORS:AddSubfilter("Heavy", [[/esoui/art/inventory/inventory_tabicon_armor_up.dds]], GetFilterCallbackForArmorType({"_heavy"}),
 						heavyArmorDropdownCallbacks)
-	ARMORS:AddSubfilter("All", AF_TextureMap.ALL, GetFilterCallback(nil))
+	ARMORS:AddSubfilter("All", AF_TextureMap.ALL, GetFilterCallback(nil), allArmorDropdownCallbacks)
 
 	local CONSUMABLES = AdvancedFilterGroup:New("Consumables")
 	CONSUMABLES:AddSubfilter("AvARepair", AF_TextureMap.AVAREPAIR, GetFilterCallback({ITEMTYPE_AVA_REPAIR}))
