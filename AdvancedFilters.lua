@@ -205,9 +205,9 @@ local function AdvancedFilters_Loaded(eventCode, addOnName)
 	-- BACKPACK_PLAYER_TRADE_LAYOUT_FRAGMENT.layoutData.defaultAdditionalFilter = BACKPACK_PLAYER_TRADE_LAYOUT_FRAGMENT.layoutData.additionalFilter
 	-- BACKPACK_STORE_LAYOUT_FRAGMENT.layoutData.defaultAdditionalFilter = BACKPACK_STORE_LAYOUT_FRAGMENT.layoutData.additionalFilter
 
-	-- ZO_PreHook(BAGS:GetParent(), "SetHidden", InventoryShown)
-	-- ZO_PreHook(BANK:GetParent(), "SetHidden", InventoryShown)
-	-- ZO_PreHook(GUILDBANK:GetParent(), "SetHidden", InventoryShown)
+	ZO_PreHook(BAGS:GetParent(), "SetHidden", InventoryShown)
+	ZO_PreHook(BANK:GetParent(), "SetHidden", InventoryShown)
+	ZO_PreHook(GUILDBANK:GetParent(), "SetHidden", InventoryShown)
 end
 
 local function AdvancedFilters_Initialized()
