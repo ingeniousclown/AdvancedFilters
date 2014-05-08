@@ -21,6 +21,8 @@ local currentDropdown = nil
 local BUTTON_STRING = "AdvancedFilters_Button_Filter"
 local DROPDOWN_STRING = "AdvancedFilters_Dropdown_Filter"
 
+local _
+
 AdvancedFilterGroup = ZO_Object:Subclass()
 
 local function AdvancedFilters_GetLanguage()
@@ -145,10 +147,10 @@ end
 function AdvancedFilterGroup:AddSubfilter( name, icon, callback, dropdownCallbacks )
 	local tooltipSet = AF_Strings[AdvancedFilters_GetLanguage()].TOOLTIPS
 
-
 	local anchorX = -STARTX + #self.subfilters * -ICON_SIZE
 
 	local subfilter = WINDOW_MANAGER:CreateControl( self.control:GetName() .. name, self.control, CT_CONTROL )
+	subfilter.name = name
 	subfilter:SetAnchor(CENTER, self.control, RIGHT, anchorX, 0)
 	subfilter:SetDimensions(ICON_SIZE, ICON_SIZE)
 
@@ -156,6 +158,7 @@ function AdvancedFilterGroup:AddSubfilter( name, icon, callback, dropdownCallbac
 	button:SetAnchor(TOPLEFT, subfilter, TOPLEFT)
 	button:SetDimensions(ICON_SIZE, ICON_SIZE)
 	button:SetHandler("OnClicked", function(innerSelf)
+			if(not subfilter.isActive) then return end
 			if(innerSelf == currentSelected) then return end
 			self:ChangeLabel(tooltipSet[name])
 			if(subfilter.dropdown) then
@@ -168,11 +171,13 @@ function AdvancedFilterGroup:AddSubfilter( name, icon, callback, dropdownCallbac
 	button.isSelected = false
 	button.upTexture = icon.upTexture
 	button.downTexture = icon.downTexture
+	subfilter.button = button
 
 	local texture = WINDOW_MANAGER:CreateControl( button:GetName() .. "Texture", button, CT_TEXTURE )
 	texture:SetAnchor(CENTER, subfilter, CENTER)
 	texture:SetDimensions(ICON_SIZE, ICON_SIZE)
 	texture:SetTexture(icon.upTexture or icon)
+	subfilter.texture = texture
 
 	local flash
 	if(icon.flash) then
@@ -185,7 +190,7 @@ function AdvancedFilterGroup:AddSubfilter( name, icon, callback, dropdownCallbac
 
 	button:SetHandler("OnMouseEnter", function(self)
 		ZO_Tooltips_ShowTextTooltip(self, TOP, tooltipSet[name])
-		if(flash) then
+		if(flash and subfilter.isActive) then
 			flash:SetHidden(false)
 		end
 	end)
@@ -200,7 +205,7 @@ function AdvancedFilterGroup:AddSubfilter( name, icon, callback, dropdownCallbac
 		local dropdown = self:AddDropdownFilter( subfilter, dropdownCallbacks )
 	end
 
-	-- subfilter:SetHidden(true)
+	subfilter.isActive = true
 
 	table.insert(self.subfilters, subfilter)
 end

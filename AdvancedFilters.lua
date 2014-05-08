@@ -1,12 +1,11 @@
 ------------------------------------------------------------------
 --AdvancedFilters.lua
 --Author: ingeniousclown
---v0.3.3
+--v0.4.0
 
 --Advanced Filters adds a line of subfilters to the inventory
 --screen.
 ------------------------------------------------------------------
-
 
 local ADV_FILTER_HEIGHT = 40
 local oldY = nil
@@ -37,10 +36,28 @@ local subfilterRows = {
 	[ITEMFILTERTYPE_MISCELLANEOUS] = nil
 }
 
---replace "additional filter" with  "additional filter AND myfilter"
+local _
+
+local function InventoryTypeToBagId( inventoryType )
+	if(inventoryType == 1) then
+		return 1
+	elseif(inventoryType == 3) then
+		return 2
+	elseif(inventoryType == 4) then
+		return 3
+	end
+	return 0
+end
 
 function GetCurrentInventoryType()
 	return currentInventoryType
+end
+
+function InventoryToInventoryType( inventory )
+	if(inventory == BAGS) then return 1 end
+	if(inventory == QUEST) then return 2 end
+	if(inventory == BANK) then return 3 end
+	if(inventory == GUILDBANK) then return 4 end
 end
 
 local function RearrangeControls( self )
@@ -108,10 +125,37 @@ local function SetFilterParent( parent )
 	end
 end
 
+local function CheckSubfilters()
+	if(not subfilterRows[currentBag.currentFilter]) then return end
+
+	for _,v in ipairs(subfilterRows[currentBag.currentFilter].subfilters) do
+		v.texture:SetColor(.3, .3, .3, .9)
+		v.isActive = false
+	end
+
+	for _,item in pairs(PLAYER_INVENTORY.inventories[GetCurrentInventoryType()].slots) do
+		for _,filter in ipairs(subfilterRows[currentBag.currentFilter].subfilters) do
+			if(not filter.isActive and filter.button.filterCallback(item)) then
+				filter.isActive = true
+				filter.texture:SetColor(1, 1, 1, 1)
+			end
+		end
+	end
+end
+
+local function GuildBankReady()
+	if(GetCurrentInventoryType() == INVENTORY_GUILD_BANK) then
+		CheckSubfilters()
+		if(subfilterRows[currentBag.currentFilter]) then
+			subfilterRows[currentBag.currentFilter]:ResetToAll()
+		end
+	end
+end
+
 --this handles the sudden change between bags
 --because all the filter bars are shared, they would be hidden upon changing inventories
-local function InventoryShown( self )
-	if(currentBag == self) then return end
+local function InventoryShown( self, isHidden )
+	if(currentBag == self or isHidden) then return end
 
 	self = self:GetNamedChild("Backpack")
 	SetFilterParent(self)
@@ -120,8 +164,9 @@ local function InventoryShown( self )
 		subfilterRows[self.currentFilter]:ResetToAll()
 	end
 
-	currentInventoryType = self.inventoryType
+	currentInventoryType = InventoryToInventoryType(self)
 	currentBag = self
+	CheckSubfilters()
 end
 
 local function ChangeFilter( self, filterTab )
@@ -161,6 +206,23 @@ local function ChangeFilter( self, filterTab )
 	currentSubFilter = nil
 	subfilterRows[newFilter]:SetHidden(false)
 	subfilterRows[newFilter]:ResetToAll()
+
+	CheckSubfilters()
+end
+
+local function InventorySlotUpdated( eventId, bagId, slotIndex )
+	local inventoryType = PLAYER_INVENTORY.bagToInventoryType[bagId]
+	local pseudoSlot = {}
+	pseudoSlot.bagId = bagId
+	pseudoSlot.slotIndex = slotIndex
+	if(inventoryType == GetCurrentInventoryType() and subfilterRows[currentBag.currentFilter]) then
+		for _,filter in ipairs(subfilterRows[currentBag.currentFilter].subfilters) do
+			if(not filter.isActive and filter.button.filterCallback(pseudoSlot)) then
+				filter.isActive = true
+				filter.texture:SetColor(1, 1, 1, 1)
+			end
+		end
+	end
 end
 
 local function AdvancedFilters_Loaded(eventCode, addOnName)
@@ -201,13 +263,12 @@ local function AdvancedFilters_Loaded(eventCode, addOnName)
 
 	currentInventoryType = INVENTORY_BACKPACK
 
-	-- BACKPACK_MAIL_LAYOUT_FRAGMENT.layoutData.defaultAdditionalFilter = BACKPACK_MAIL_LAYOUT_FRAGMENT.layoutData.additionalFilter
-	-- BACKPACK_PLAYER_TRADE_LAYOUT_FRAGMENT.layoutData.defaultAdditionalFilter = BACKPACK_PLAYER_TRADE_LAYOUT_FRAGMENT.layoutData.additionalFilter
-	-- BACKPACK_STORE_LAYOUT_FRAGMENT.layoutData.defaultAdditionalFilter = BACKPACK_STORE_LAYOUT_FRAGMENT.layoutData.additionalFilter
-
 	ZO_PreHook(BAGS:GetParent(), "SetHidden", InventoryShown)
 	ZO_PreHook(BANK:GetParent(), "SetHidden", InventoryShown)
 	ZO_PreHook(GUILDBANK:GetParent(), "SetHidden", InventoryShown)
+
+	EVENT_MANAGER:RegisterForEvent("AdvancedFilters_InventorySlotUpdate", EVENT_INVENTORY_SINGLE_SLOT_UPDATE, InventorySlotUpdated)
+	EVENT_MANAGER:RegisterForEvent("AdvancedFilters_GuildBankReady", EVENT_GUILD_BANK_ITEMS_READY, GuildBankReady)
 end
 
 local function AdvancedFilters_Initialized()

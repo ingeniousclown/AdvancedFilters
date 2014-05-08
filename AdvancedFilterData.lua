@@ -1,20 +1,32 @@
 
 local hasInit = false
+local _
 
 local function GetFilterCallbackForWeaponType( filterTypes )
 	return function( slot )
 		for i=1, #filterTypes do
-			local icon = GetItemInfo(slot.bagId, slot.slotIndex)
-			if(string.find(icon, filterTypes[i])) then return true end
+			local icon,_,_,_,_,equipType = GetItemInfo(slot.bagId, slot.slotIndex)
+			if(equipType > 0 and string.find(icon, filterTypes[i])) then return true end
 		end
 	end
 end
 
-local function GetFilterCallbackForArmorType( filterTypes )
+--only one type this time...
+local function GetFilterCallbackForArmorType( filterType, iconString )
+	return function( slot )
+		local icon,_,_,_,_,equipType = GetItemInfo(slot.bagId, slot.slotIndex)
+		local soundCategory = GetItemSoundCategory(slot.bagId, slot.slotIndex)
+		if(equipType > 0 and (string.find(icon, iconString) or filterType == soundCategory)) then 
+			return true 
+		end
+	end
+end
+
+local function GetFilterCallbackForWeaponArmorType( filterTypes )
 	return function( slot )
 		for i=1, #filterTypes do
-			local icon = GetItemInfo(slot.bagId, slot.slotIndex)
-			if(string.find(icon, filterTypes[i])) then return true end
+			local soundCategory = GetItemSoundCategory(slot.bagId, slot.slotIndex)
+			if(filterTypes[i] == soundCategory) then return true end
 		end
 	end
 end
@@ -41,8 +53,7 @@ local function GetFilterCallback( filterTypes )
 		return result
 	end
 end
---/script ZO_PlayerInventory_AFGConsumables:SetHidden(false)
---/zgoo ZO_PlayerInventory_AFGConsumables
+
 function AdvancedFilters_InitAllFilters()
 	if(hasInit) then return nil end
 	hasInit = true
@@ -52,12 +63,12 @@ function AdvancedFilters_InitAllFilters()
 	--WEAPONS--
 	local WEAPONS = AdvancedFilterGroup:New("Weapons")
 	--heal staff = [[/esoui/art/progression/icon_healstaff.dds]]
-	WEAPONS:AddSubfilter("Staff", [[/esoui/art/progression/icon_firestaff.dds]], GetFilterCallbackForWeaponType({"_staff"}))
-	WEAPONS:AddSubfilter("Bow", [[/esoui/art/progression/icon_bows.dds]], GetFilterCallbackForWeaponType({"_bow"}))
+	WEAPONS:AddSubfilter("Staff", [[/esoui/art/progression/icon_firestaff.dds]], GetFilterCallbackForWeaponArmorType({ITEM_SOUND_CATEGORY_STAFF}))
+	WEAPONS:AddSubfilter("Bow", [[/esoui/art/progression/icon_bows.dds]], GetFilterCallbackForWeaponArmorType({ITEM_SOUND_CATEGORY_BOW}))
 	WEAPONS:AddSubfilter("TwoHand", [[/esoui/art/progression/icon_2handed.dds]], 
 		function(slot)
 			local callbackA = GetFilterCallbackForGear({EQUIP_TYPE_TWO_HAND})
-			local callbackB = GetFilterCallbackForWeaponType({"_staff", "_bow"})
+			local callbackB = GetFilterCallbackForWeaponArmorType({ITEM_SOUND_CATEGORY_STAFF, ITEM_SOUND_CATEGORY_BOW})
 			return callbackA(slot) and not callbackB(slot)
 		end)
 	WEAPONS:AddSubfilter("OneHand", [[/esoui/art/progression/icon_dualwield.dds]], GetFilterCallbackForGear({EQUIP_TYPE_ONE_HAND}))
@@ -73,10 +84,8 @@ function AdvancedFilters_InitAllFilters()
 		[7] = { name = "Legs", filterCallback = GetFilterCallbackForGear({EQUIP_TYPE_LEGS}) },
 		[8] = { name = "Feet", filterCallback = GetFilterCallbackForGear({EQUIP_TYPE_FEET}) }
 	}
-
 	local mediumArmorDropdownCallbacks = ZO_DeepTableCopy(lightArmorDropdownCallbacks, mediumArmorDropdownCallbacks)
 	local heavyArmorDropdownCallbacks = ZO_DeepTableCopy(lightArmorDropdownCallbacks, heavyArmorDropdownCallbacks)
-
 	local allArmorDropdownCallbacks = ZO_DeepTableCopy(lightArmorDropdownCallbacks, allArmorDropdownCallbacks)
 
 	local jewelryDropdownCallbacks = {
@@ -90,11 +99,11 @@ function AdvancedFilters_InitAllFilters()
 	ARMORS:AddSubfilter("Jewelry", [[/esoui/art/charactercreate/charactercreate_accessory_up.dds]], GetFilterCallbackForGear({EQUIP_TYPE_RING, EQUIP_TYPE_NECK}),
 						jewelryDropdownCallbacks)
 	ARMORS:AddSubfilter("Shield", [[/esoui/art/guild/guildhistory_indexicon_guild_up.dds]], GetFilterCallbackForGear({EQUIP_TYPE_OFF_HAND}))
-	ARMORS:AddSubfilter("Light", [[/esoui/art/charactercreate/charactercreate_bodyicon_up.dds]], GetFilterCallbackForArmorType({"_light"}),
+	ARMORS:AddSubfilter("Light", [[/esoui/art/charactercreate/charactercreate_bodyicon_up.dds]], GetFilterCallbackForArmorType(ITEM_SOUND_CATEGORY_LIGHT_ARMOR, "light"),
 						lightArmorDropdownCallbacks)
-	ARMORS:AddSubfilter("Medium", [[/esoui/art/campaign/overview_indexicon_scoring_up.dds]], GetFilterCallbackForArmorType({"_medium"}),
+	ARMORS:AddSubfilter("Medium", [[/esoui/art/campaign/overview_indexicon_scoring_up.dds]], GetFilterCallbackForArmorType(ITEM_SOUND_CATEGORY_MEDIUM_ARMOR, "medium"),
 						mediumArmorDropdownCallbacks)
-	ARMORS:AddSubfilter("Heavy", [[/esoui/art/inventory/inventory_tabicon_armor_up.dds]], GetFilterCallbackForArmorType({"_heavy"}),
+	ARMORS:AddSubfilter("Heavy", [[/esoui/art/inventory/inventory_tabicon_armor_up.dds]], GetFilterCallbackForArmorType(ITEM_SOUND_CATEGORY_HEAVY_ARMOR, "heavy"),
 						heavyArmorDropdownCallbacks)
 	ARMORS:AddSubfilter("All", AF_TextureMap.ALL, GetFilterCallback(nil), allArmorDropdownCallbacks)
 
@@ -146,18 +155,3 @@ end
 		--[[/esoui/art/progression/icon_healstaff.dds]]
 -- bow
 		--[[/esoui/art/progression/icon_bows.dds]]
-
-
--- shield
-		--[[/esoui/art/guild/guildhistory_indexicon_guild_up.dds]]
-		--[[/esoui/art/characterwindow/gearslot_offhand.dds]]
--- light
-		--[[/esoui/art/characterwindow/gearslot_tabard.dds]]
--- medium
-		--[[/esoui/art/progression/progression_tabicon_passive_inactive.dds]]
--- heavy
-		--[[/esoui/art/progression/progression_indexicon_armor_up.dds]]
-
-
--- general Miscellaneous
-		--/esoui/art/inventory/inventory_tabicon_misc_up.dds
