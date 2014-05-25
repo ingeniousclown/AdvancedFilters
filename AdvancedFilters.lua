@@ -1,7 +1,7 @@
 ------------------------------------------------------------------
 --AdvancedFilters.lua
 --Author: ingeniousclown
---v0.4.0
+--v0.5.0
 
 --Advanced Filters adds a line of subfilters to the inventory
 --screen.
@@ -188,9 +188,6 @@ local function ChangeFilter( self, filterTab )
 		subfilterRows[currentBag.currentFilter]:ResetToAll()
 	end
 
-	-- if(PLAYER_INVENTORY.appliedLayout) then
-	-- 	PLAYER_INVENTORY.appliedLayout.additionalFilter = PLAYER_INVENTORY.appliedLayout.defaultAdditionalFilter
-	-- end
 	local newFilter = self:GetTabFilterInfo(inventoryType, filterTab)
 	
 	if( not (newFilter == ITEMFILTERTYPE_WEAPONS
@@ -210,7 +207,13 @@ local function ChangeFilter( self, filterTab )
 	CheckSubfilters()
 end
 
-local function InventorySlotUpdated( eventId, bagId, slotIndex )
+local canUpdate = {
+	[1] = true,
+	[2] = true,
+	[3] = true,
+	[4] = true
+}
+local function UpdateInventoryFilters( bagId, slotIndex )
 	local inventoryType = PLAYER_INVENTORY.bagToInventoryType[bagId]
 	local pseudoSlot = {}
 	pseudoSlot.bagId = bagId
@@ -223,9 +226,21 @@ local function InventorySlotUpdated( eventId, bagId, slotIndex )
 			end
 		end
 	end
+	canUpdate[bagId] = true
 end
 
-local function AdvancedFilters_Loaded(eventCode, addOnName)
+local function InventorySlotUpdated( eventId, bagId, slotIndex )
+	-- this is a simple way to buffer the event
+	-- just wait 25ms before actually updating the filters so we can avoid
+	-- doing this more than necessary
+	-- and just in case, it's tracked separately per bag
+	if(canUpdate[bagId]) then
+		canUpdate[bagId] = false
+		zo_callLater(function() UpdateInventoryFilters(bagId, slotIndex) end, 1000)
+	end
+end
+
+local function AdvancedFilters_Loaded( eventCode, addOnName )
     if(addOnName ~= "AdvancedFilters") then
         return
     end

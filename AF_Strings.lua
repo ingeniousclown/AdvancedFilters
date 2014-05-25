@@ -4,7 +4,15 @@ AF_Strings = {
 		TOOLTIPS = {
 			["All"] = "All",
 
-			["Staff"] = "Staff",
+			["Axe"] = "Axe",
+			["Sword"] = "Sword",
+			["Hammer"] = "Hammer",
+			["Fire"] = "Fire",
+			["Frost"] = "Frost",
+			["Lightning"] = "Lightning",
+
+			["DestructionStaff"] = "Destruction Staff",
+			["HealStaff"] = "Healing Staff",
 			["Bow"] = "Bow",
 			["TwoHand"] = "Two-Handed",
 			["OneHand"] = "One-Handed",
@@ -60,7 +68,15 @@ AF_Strings = {
 		TOOLTIPS = {
 			["All"] = "Alle",
 
-			["Staff"] = "St\195\164be",
+			["Axe"] = "Axe",
+			["Sword"] = "Sword",
+			["Hammer"] = "Hammer",
+			["Fire"] = "Fire",
+			["Frost"] = "Frost",
+			["Lightning"] = "Lightning",
+
+			["DestructionStaff"] = "Destruction Staff",
+			["HealStaff"] = "Healing Staff",
 			["Bow"] = "B\195\182gen",
 			["TwoHand"] = "Zweih\195\164nder",
 			["OneHand"] = "Einh\195\164nder",
@@ -116,7 +132,15 @@ AF_Strings = {
 		TOOLTIPS = {
 			["All"] = "Tout",
 
-			["Staff"] = "B\195\162tons",
+			["Axe"] = "Axe",
+			["Sword"] = "Sword",
+			["Hammer"] = "Hammer",
+			["Fire"] = "Fire",
+			["Frost"] = "Frost",
+			["Lightning"] = "Lightning",
+
+			["DestructionStaff"] = "Destruction Staff",
+			["HealStaff"] = "Healing Staff",
 			["Bow"] = "Arcs",
 			["TwoHand"] = "Deux Mains",
 			["OneHand"] = "Une Main",

@@ -6,6 +6,7 @@ AF_TextureMap = {
 		flash = [[/esoui/art/inventory/inventory_tabicon_all_over.dds]]
 	},
 
+	--consumables
 	AVAREPAIR = {
 		upTexture = "AdvancedFilters/assets/consumables/avarepair/avarepair_up.dds",
 		downTexture = "AdvancedFilters/assets/consumables/avarepair/avarepair_down.dds",
@@ -47,6 +48,7 @@ AF_TextureMap = {
 		flash = "AdvancedFilters/assets/consumables/scrolls/scroll_over.dds",
 	},
 
+	--materials
 	ALCHEMY = {
 		upTexture = "AdvancedFilters/assets/materials/alchemy/alchemy_up.dds",
 		downTexture = "AdvancedFilters/assets/materials/alchemy/alchemy_down.dds",
@@ -91,5 +93,37 @@ AF_TextureMap = {
 		upTexture = "AdvancedFilters/assets/materials/wtrait/wtrait_up.dds",
 		downTexture = "AdvancedFilters/assets/materials/wtrait/wtrait_down.dds",
 		flash = "AdvancedFilters/assets/materials/wtrait/wtrait_over.dds",
-	}
+	},
+
+	--miscellaneous
+	ARMORGLYPH = {
+		upTexture = "AdvancedFilters/assets/miscellaneous/armorglyph/armorglyph_up.dds",
+		downTexture = "AdvancedFilters/assets/miscellaneous/armorglyph/armorglyph_down.dds",
+		flash = "AdvancedFilters/assets/miscellaneous/armorglyph/armorglyph_over.dds",
+	},
+	BAIT = {
+		upTexture = "AdvancedFilters/assets/miscellaneous/bait/bait_up.dds",
+		downTexture = "AdvancedFilters/assets/miscellaneous/bait/bait_down.dds",
+		flash = "AdvancedFilters/assets/miscellaneous/bait/bait_over.dds",
+	},
+	JEWELRYGLYPH = {
+		upTexture = "AdvancedFilters/assets/miscellaneous/jewelryglyph/jewelryglyph_up.dds",
+		downTexture = "AdvancedFilters/assets/miscellaneous/jewelryglyph/jewelryglyph_down.dds",
+		flash = "AdvancedFilters/assets/miscellaneous/jewelryglyph/jewelryglyph_over.dds",
+	},
+	TRASH = {
+		upTexture = "AdvancedFilters/assets/miscellaneous/trash/trash_up.dds",
+		downTexture = "AdvancedFilters/assets/miscellaneous/trash/trash_down.dds",
+		flash = "AdvancedFilters/assets/miscellaneous/trash/trash_over.dds",
+	},
+	TROPHY = {
+		upTexture = "AdvancedFilters/assets/miscellaneous/trophy/trophy_up.dds",
+		downTexture = "AdvancedFilters/assets/miscellaneous/trophy/trophy_down.dds",
+		flash = "AdvancedFilters/assets/miscellaneous/trophy/trophy_over.dds",
+	},
+	WEAPONGLYPH = {
+		upTexture = "AdvancedFilters/assets/miscellaneous/weaponglyph/weaponglyph_up.dds",
+		downTexture = "AdvancedFilters/assets/miscellaneous/weaponglyph/weaponglyph_down.dds",
+		flash = "AdvancedFilters/assets/miscellaneous/weaponglyph/weaponglyph_over.dds",
+	},
 }
