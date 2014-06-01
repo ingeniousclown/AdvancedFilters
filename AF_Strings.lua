@@ -28,6 +28,10 @@ AF_Strings = {
 			["Ring"] = "Ring",
 			["Neck"] = "Neck",
 
+			["Aspect"] = "Aspect",
+			["Essence"] = "Essence",
+			["Potency"] = "Potency",
+
 			["Misc"] = "Miscellaneous",
 			["Jewelry"] = "Jewelry",
 			["Shield"] = "Shield",
@@ -92,6 +96,10 @@ AF_Strings = {
 			["Ring"] = "Ring",
 			["Neck"] = "Hals",
 
+			["Aspect"] = "Aspect",
+			["Essence"] = "Essence",
+			["Potency"] = "Potency",
+
 			["Misc"] = "Sonstige",
 			["Jewelry"] = "Schmuck",
 			["Shield"] = "Schilde",
@@ -155,6 +163,10 @@ AF_Strings = {
 
 			["Ring"] = "Anneaux",
 			["Neck"] = "Pendentifs",
+
+			["Aspect"] = "Aspect",
+			["Essence"] = "Essence",
+			["Potency"] = "Potency",
 
 			["Misc"] = "Divers",
 			["Jewelry"] = "Bijoux",

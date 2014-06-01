@@ -144,7 +144,7 @@ function AdvancedFilterGroup:ChangeLabel( text )
 	self.label:SetText(string.upper(text))
 end
 
-function AdvancedFilterGroup:AddSubfilter( name, icon, callback, dropdownCallbacks )
+function AdvancedFilterGroup:AddSubfilter( name, icon, callback, dropdownCallbacks, dropdownWidth )
 	local tooltipSet = AF_Strings[AdvancedFilters_GetLanguage()].TOOLTIPS
 
 	local anchorX = -STARTX + #self.subfilters * -ICON_SIZE
@@ -202,7 +202,7 @@ function AdvancedFilterGroup:AddSubfilter( name, icon, callback, dropdownCallbac
 	end)
 
 	if(dropdownCallbacks) then
-		local dropdown = self:AddDropdownFilter( subfilter, dropdownCallbacks )
+		local dropdown = self:AddDropdownFilter( subfilter, dropdownCallbacks, dropdownWidth )
 	end
 
 	subfilter.isActive = true
@@ -210,14 +210,17 @@ function AdvancedFilterGroup:AddSubfilter( name, icon, callback, dropdownCallbac
 	table.insert(self.subfilters, subfilter)
 end
 
-function AdvancedFilterGroup:AddDropdownFilter( parent, callbackTable )
+function AdvancedFilterGroup:AddDropdownFilter( parent, callbackTable, dropdownWidth )
 	local tooltipSet = AF_Strings[AdvancedFilters_GetLanguage()].TOOLTIPS
 	local dropdown = WINDOW_MANAGER:CreateControlFromVirtual(parent:GetName() .. "DropdownFilter", parent, "ZO_ComboBox")
 
 	parent.dropdown = dropdown
 	dropdown:SetHidden(true)
-	dropdown:SetAnchor(LEFT, self.control, LEFT, 32)
+	dropdown:SetAnchor(LEFT, self.control, LEFT, 10)
 	dropdown:SetHeight(24)
+	if(dropdownWidth) then
+		dropdown:SetWidth(dropdownWidth)
+	end
 	local comboBox = dropdown.m_comboBox
     comboBox:SetSortsItems(false)
 
@@ -264,4 +267,9 @@ end
 
 function AdvancedFilterGroup:GetControl()
 	return self.control
+end
+
+
+function AdvancedFilterGroup:InitLibFilters()
+	libFilters:InitializeLibFilters()
 end

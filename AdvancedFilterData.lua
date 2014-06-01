@@ -37,6 +37,17 @@ local function GetFilterCallbackForGear( filterTypes )
 	end
 end
 
+local function GetFilterCallbackForEnchanting( filterTypes )
+	return function( slot )
+		local result = false
+		for i=1, #filterTypes do
+			local _,_,runeType = GetItemCraftingInfo(slot.bagId, slot.slotIndex)
+			result = result or (filterTypes[i] == runeType)
+		end
+		return result
+	end
+end
+
 local function GetFilterCallback( filterTypes )
 	if(not filterTypes) then return function(slot) return true end end
 
@@ -110,7 +121,7 @@ function AdvancedFilters_InitAllFilters()
 	local jewelryDropdownCallbacks = {
 		[1] = { name = "All", filterCallback = GetFilterCallback(nil) },
 		[2] = { name = "Ring", filterCallback = GetFilterCallbackForGear({EQUIP_TYPE_RING}) },
-		[3] = { name = "Neck", filterCallback = GetFilterCallbackForGear({EQUIP_TYPE_NECK}) },
+		[3] = { name = "Neck", filterCallback = GetFilterCallbackForGear({EQUIP_TYPE_NECK}) }
 	}
 
 	local ARMORS = AdvancedFilterGroup:New("Armors")
@@ -139,12 +150,19 @@ function AdvancedFilters_InitAllFilters()
 	CONSUMABLES:AddSubfilter("All", AF_TextureMap.ALL, GetFilterCallback(nil))
 
 	-- MATERIALS --
+	local enchantingDropdownCallbacks = {
+		[1] = { name = "All", filterCallback = GetFilterCallback(nil) },
+		[2] = { name = "Aspect", filterCallback = GetFilterCallbackForGear({ENCHANTING_RUNE_ASPECT}) },
+		[3] = { name = "Essence", filterCallback = GetFilterCallbackForGear({ENCHANTING_RUNE_ESSENCE}) },
+		[4] = { name = "Potency", filterCallback = GetFilterCallbackForGear({ENCHANTING_RUNE_POTENCY}) }
+	}
+
 	local MATERIALS = AdvancedFilterGroup:New("Materials")
 	MATERIALS:AddSubfilter("ArmorTrait", AF_TextureMap.ATRAIT, GetFilterCallback({ITEMTYPE_ARMOR_TRAIT}))
 	MATERIALS:AddSubfilter("WeaponTrait", AF_TextureMap.WTRAIT, GetFilterCallback({ITEMTYPE_WEAPON_TRAIT}))
 	MATERIALS:AddSubfilter("Style", AF_TextureMap.STYLE, GetFilterCallback({ITEMTYPE_STYLE_MATERIAL}))
 	MATERIALS:AddSubfilter("Provisioning", AF_TextureMap.PROVISIONING, GetFilterCallback({ITEMTYPE_INGREDIENT}))
-	MATERIALS:AddSubfilter("Enchanting", AF_TextureMap.ENCHANTING, GetFilterCallback({ITEMTYPE_ENCHANTING_RUNE}))
+	MATERIALS:AddSubfilter("Enchanting", AF_TextureMap.ENCHANTING, GetFilterCallback({ITEMTYPE_ENCHANTING_RUNE}), enchantingDropdownCallbacks, 100)
 	MATERIALS:AddSubfilter("Alchemy", AF_TextureMap.ALCHEMY, GetFilterCallback({ITEMTYPE_REAGENT, ITEMTYPE_ALCHEMY_BASE}))
 	MATERIALS:AddSubfilter("Woodworking", AF_TextureMap.WOODWORKING, GetFilterCallback({ITEMTYPE_WOODWORKING_MATERIAL, ITEMTYPE_WOODWORKING_RAW_MATERIAL, ITEMTYPE_WOODWORKING_BOOSTER}))
 	MATERIALS:AddSubfilter("Clothier", AF_TextureMap.CLOTHIER, GetFilterCallback({ITEMTYPE_CLOTHIER_MATERIAL, ITEMTYPE_CLOTHIER_RAW_MATERIAL, ITEMTYPE_CLOTHIER_BOOSTER}))
@@ -156,8 +174,8 @@ function AdvancedFilters_InitAllFilters()
 	MISCELLANEOUS:AddSubfilter("Trophy", AF_TextureMap.TROPHY, GetFilterCallback({ITEMTYPE_TROPHY}))
 	MISCELLANEOUS:AddSubfilter("Trash", AF_TextureMap.TRASH, GetFilterCallback({ITEMTYPE_TRASH}))
 	MISCELLANEOUS:AddSubfilter("Bait", AF_TextureMap.BAIT, GetFilterCallback({ITEMTYPE_LURE}))
-	MISCELLANEOUS:AddSubfilter("Siege", [[/esoui/art/ava/ava_keepstatus_tabicon_keep_inactive.dds]], GetFilterCallback({ITEMTYPE_SIEGE}))
-	MISCELLANEOUS:AddSubfilter("SoulGem", [[/esoui/art/guild/guild_indexicon_leader_up.dds]], GetFilterCallback({ITEMTYPE_SOUL_GEM}))
+	MISCELLANEOUS:AddSubfilter("Siege", AF_TextureMap.AVAWEAPON, GetFilterCallback({ITEMTYPE_SIEGE}))
+	MISCELLANEOUS:AddSubfilter("SoulGem", AF_TextureMap.SOULGEM, GetFilterCallback({ITEMTYPE_SOUL_GEM}))
 	MISCELLANEOUS:AddSubfilter("JewelryGlyph", AF_TextureMap.JEWELRYGLYPH, GetFilterCallback({ITEMTYPE_GLYPH_JEWELRY}))
 	MISCELLANEOUS:AddSubfilter("ArmorGlyph", AF_TextureMap.ARMORGLYPH, GetFilterCallback({ITEMTYPE_GLYPH_ARMOR}))
 	MISCELLANEOUS:AddSubfilter("WeaponGlyph", AF_TextureMap.WEAPONGLYPH, GetFilterCallback({ITEMTYPE_GLYPH_WEAPON}))

@@ -1,7 +1,7 @@
 ------------------------------------------------------------------
 --AdvancedFilters.lua
 --Author: ingeniousclown
---v0.5.0
+--v0.5.1
 
 --Advanced Filters adds a line of subfilters to the inventory
 --screen.
@@ -244,6 +244,8 @@ local function AdvancedFilters_Loaded( eventCode, addOnName )
     if(addOnName ~= "AdvancedFilters") then
         return
     end
+
+    AdvancedFilterGroup:InitLibFilters()
 
     ZO_PreHook(PLAYER_INVENTORY, "ChangeFilter", ChangeFilter)
 	ZO_PreHook("ZO_ScrollList_UpdateScroll", RearrangeControls)

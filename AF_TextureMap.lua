@@ -101,6 +101,11 @@ AF_TextureMap = {
 		downTexture = "AdvancedFilters/assets/miscellaneous/armorglyph/armorglyph_down.dds",
 		flash = "AdvancedFilters/assets/miscellaneous/armorglyph/armorglyph_over.dds",
 	},
+	AVAWEAPON = {
+		upTexture = "AdvancedFilters/assets/miscellaneous/avaweapon/avaweapon_up.dds",
+		downTexture = "AdvancedFilters/assets/miscellaneous/avaweapon/avaweapon_down.dds",
+		flash = "AdvancedFilters/assets/miscellaneous/avaweapon/avaweapon_over.dds",
+	},
 	BAIT = {
 		upTexture = "AdvancedFilters/assets/miscellaneous/bait/bait_up.dds",
 		downTexture = "AdvancedFilters/assets/miscellaneous/bait/bait_down.dds",
@@ -110,6 +115,11 @@ AF_TextureMap = {
 		upTexture = "AdvancedFilters/assets/miscellaneous/jewelryglyph/jewelryglyph_up.dds",
 		downTexture = "AdvancedFilters/assets/miscellaneous/jewelryglyph/jewelryglyph_down.dds",
 		flash = "AdvancedFilters/assets/miscellaneous/jewelryglyph/jewelryglyph_over.dds",
+	},
+	SOULGEM = {
+		upTexture = "AdvancedFilters/assets/miscellaneous/soulgem/soulgem_up.dds",
+		downTexture = "AdvancedFilters/assets/miscellaneous/soulgem/soulgem_down.dds",
+		flash = "AdvancedFilters/assets/miscellaneous/soulgem/soulgem_over.dds",
 	},
 	TRASH = {
 		upTexture = "AdvancedFilters/assets/miscellaneous/trash/trash_up.dds",
