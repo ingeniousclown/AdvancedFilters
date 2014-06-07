@@ -245,8 +245,6 @@ local function AdvancedFilters_Loaded( eventCode, addOnName )
         return
     end
 
-    AdvancedFilterGroup:InitLibFilters()
-
     ZO_PreHook(PLAYER_INVENTORY, "ChangeFilter", ChangeFilter)
 	ZO_PreHook("ZO_ScrollList_UpdateScroll", RearrangeControls)
 

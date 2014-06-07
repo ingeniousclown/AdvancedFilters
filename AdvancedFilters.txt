@@ -1,6 +1,6 @@
 ## Title: Advanced Filters
 ## Author: ingeniousclown
-## Version: 0.5.1
+## Version: 0.5.2
 ## APIVersion: 100004
 ## OptionalDependsOn: ItemSaver
 ## OptionalDependsOn: InventoryGridView

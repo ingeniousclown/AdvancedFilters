@@ -68,23 +68,23 @@ function AdvancedFilters_InitAllFilters()
 
 	-- WEAPONS --
 	local oneHandedDropdownCallbacks = {
-		[1] = { name = "All", filterCallback = GetFilterCallback(nil) },
-		[2] = { name = "Axe", filterCallback = GetFilterCallbackForWeaponType({WEAPONTYPE_AXE}) },
-		[3] = { name = "Hammer", filterCallback = GetFilterCallbackForWeaponType({WEAPONTYPE_HAMMER}) },
-		[4] = { name = "Sword", filterCallback = GetFilterCallbackForWeaponType({WEAPONTYPE_SWORD}) },
-		[5] = { name = "Dagger", filterCallback = GetFilterCallbackForWeaponType({WEAPONTYPE_DAGGER}) }
+		{ name = "All", filterCallback = GetFilterCallback(nil) },
+		{ name = "Axe", filterCallback = GetFilterCallbackForWeaponType({WEAPONTYPE_AXE}) },
+		{ name = "Hammer", filterCallback = GetFilterCallbackForWeaponType({WEAPONTYPE_HAMMER}) },
+		{ name = "Sword", filterCallback = GetFilterCallbackForWeaponType({WEAPONTYPE_SWORD}) },
+		{ name = "Dagger", filterCallback = GetFilterCallbackForWeaponType({WEAPONTYPE_DAGGER}) }
 	}
 	local twoHandedDropdownCallbacks = {
-		[1] = { name = "All", filterCallback = GetFilterCallback(nil) },
-		[2] = { name = "Axe", filterCallback = GetFilterCallbackForWeaponType({WEAPONTYPE_TWO_HANDED_AXE}) },
-		[3] = { name = "Hammer", filterCallback = GetFilterCallbackForWeaponType({WEAPONTYPE_TWO_HANDED_HAMMER}) },
-		[4] = { name = "Sword", filterCallback = GetFilterCallbackForWeaponType({WEAPONTYPE_TWO_HANDED_SWORD}) },
+		{ name = "All", filterCallback = GetFilterCallback(nil) },
+		{ name = "Axe", filterCallback = GetFilterCallbackForWeaponType({WEAPONTYPE_TWO_HANDED_AXE}) },
+		{ name = "Hammer", filterCallback = GetFilterCallbackForWeaponType({WEAPONTYPE_TWO_HANDED_HAMMER}) },
+		{ name = "Sword", filterCallback = GetFilterCallbackForWeaponType({WEAPONTYPE_TWO_HANDED_SWORD}) }
 	}
 	local destructionStaffDropdownCallbacks = {
-		[1] = { name = "All", filterCallback = GetFilterCallback(nil) },
-		[2] = { name = "Fire", filterCallback = GetFilterCallbackForWeaponType({WEAPONTYPE_FIRE_STAFF}) },
-		[3] = { name = "Frost", filterCallback = GetFilterCallbackForWeaponType({WEAPONTYPE_FROST_STAFF}) },
-		[4] = { name = "Lightning", filterCallback = GetFilterCallbackForWeaponType({WEAPONTYPE_LIGHTNING}) },
+		{ name = "All", filterCallback = GetFilterCallback(nil) },
+		{ name = "Fire", filterCallback = GetFilterCallbackForWeaponType({WEAPONTYPE_FIRE_STAFF}) },
+		{ name = "Frost", filterCallback = GetFilterCallbackForWeaponType({WEAPONTYPE_FROST_STAFF}) },
+		{ name = "Lightning", filterCallback = GetFilterCallbackForWeaponType({WEAPONTYPE_LIGHTNING}) }
 	}
 
 	local WEAPONS = AdvancedFilterGroup:New("Weapons")
@@ -152,9 +152,9 @@ function AdvancedFilters_InitAllFilters()
 	-- MATERIALS --
 	local enchantingDropdownCallbacks = {
 		[1] = { name = "All", filterCallback = GetFilterCallback(nil) },
-		[2] = { name = "Aspect", filterCallback = GetFilterCallbackForGear({ENCHANTING_RUNE_ASPECT}) },
-		[3] = { name = "Essence", filterCallback = GetFilterCallbackForGear({ENCHANTING_RUNE_ESSENCE}) },
-		[4] = { name = "Potency", filterCallback = GetFilterCallbackForGear({ENCHANTING_RUNE_POTENCY}) }
+		[2] = { name = "Aspect", filterCallback = GetFilterCallbackForEnchanting({ENCHANTING_RUNE_ASPECT}) },
+		[3] = { name = "Essence", filterCallback = GetFilterCallbackForEnchanting({ENCHANTING_RUNE_ESSENCE}) },
+		[4] = { name = "Potency", filterCallback = GetFilterCallbackForEnchanting({ENCHANTING_RUNE_POTENCY}) }
 	}
 
 	local MATERIALS = AdvancedFilterGroup:New("Materials")

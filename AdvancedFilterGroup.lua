@@ -230,8 +230,6 @@ function AdvancedFilterGroup:AddDropdownFilter( parent, callbackTable, dropdownW
 			end))
 	end
 
-	dropdown:SetHandler("OnHidden", function() d("test") end)
-
 	comboBox:SelectFirstItem()
     comboBox:SetSelectedItemFont("ZoFontGameSmall")
     comboBox:SetDropdownFont("ZoFontGameSmall")
@@ -267,9 +265,4 @@ end
 
 function AdvancedFilterGroup:GetControl()
 	return self.control
-end
-
-
-function AdvancedFilterGroup:InitLibFilters()
-	libFilters:InitializeLibFilters()
 end
