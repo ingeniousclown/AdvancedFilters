@@ -1,19 +1,29 @@
-	
+
+--thanks ckaotik
+local function AF_Localize(text)
+	if type(text) == 'number' then
+		-- get the string from this constant
+		text = GetString(text)
+	end
+	-- clean up suffixes such as ^F or ^S
+	return zo_strformat(SI_TOOLTIP_ITEM_NAME, text)
+end
+
 AF_Strings = {
 	["en"] = {
 		TOOLTIPS = {
 			["All"] = "All",
 
-			["Axe"] = GetString(SI_WEAPONTYPE1),
-			["Sword"] = GetString(SI_WEAPONTYPE3),
-			["Hammer"] = GetString(SI_WEAPONTYPE2),
-			["Dagger"] = GetString(SI_WEAPONTYPE11),
-			["Fire"] = GetString(SI_WEAPONTYPE12),
-			["Frost"] = GetString(SI_WEAPONTYPE13),
-			["Lightning"] = GetString(SI_WEAPONTYPE15),
+			["Axe"] = AF_Localize(SI_WEAPONTYPE1),
+			["Sword"] = AF_Localize(SI_WEAPONTYPE3),
+			["Hammer"] = AF_Localize(SI_WEAPONTYPE2),
+			["Dagger"] = AF_Localize(SI_WEAPONTYPE11),
+			["Fire"] = AF_Localize(SI_WEAPONTYPE12),
+			["Frost"] = AF_Localize(SI_WEAPONTYPE13),
+			["Lightning"] = AF_Localize(SI_WEAPONTYPE15),
 
 			["DestructionStaff"] = "Destruction Staff",
-			["HealStaff"] = GetString(SI_WEAPONTYPE9),
+			["HealStaff"] = AF_Localize(SI_WEAPONTYPE9),
 			["Bow"] = "Bow",
 			["TwoHand"] = "Two-Handed",
 			["OneHand"] = "One-Handed",
@@ -29,9 +39,9 @@ AF_Strings = {
 			["Ring"] = "Ring",
 			["Neck"] = "Neck",
 
-			["Aspect"] = GetString(SI_ENCHANTINGRUNECLASSIFICATION1),
-			["Essence"] = GetString(SI_ENCHANTINGRUNECLASSIFICATION2),
-			["Potency"] = GetString(SI_ENCHANTINGRUNECLASSIFICATION3),
+			["Aspect"] = AF_Localize(SI_ENCHANTINGRUNECLASSIFICATION1),
+			["Essence"] = AF_Localize(SI_ENCHANTINGRUNECLASSIFICATION2),
+			["Potency"] = AF_Localize(SI_ENCHANTINGRUNECLASSIFICATION3),
 
 			["Misc"] = "Miscellaneous",
 			["Jewelry"] = "Jewelry",
@@ -73,16 +83,16 @@ AF_Strings = {
 		TOOLTIPS = {
 			["All"] = "Alle",
 
-			["Axe"] = GetString(SI_WEAPONTYPE1),
-			["Sword"] = GetString(SI_WEAPONTYPE3),
-			["Hammer"] = GetString(SI_WEAPONTYPE2),
-			["Dagger"] = GetString(SI_WEAPONTYPE11),
-			["Fire"] = GetString(SI_WEAPONTYPE12),
-			["Frost"] = GetString(SI_WEAPONTYPE13),
-			["Lightning"] = GetString(SI_WEAPONTYPE15),
+			["Axe"] = AF_Localize(SI_WEAPONTYPE1),
+			["Sword"] = AF_Localize(SI_WEAPONTYPE3),
+			["Hammer"] = AF_Localize(SI_WEAPONTYPE2),
+			["Dagger"] = AF_Localize(SI_WEAPONTYPE11),
+			["Fire"] = AF_Localize(SI_WEAPONTYPE12),
+			["Frost"] = AF_Localize(SI_WEAPONTYPE13),
+			["Lightning"] = AF_Localize(SI_WEAPONTYPE15),
 
 			["DestructionStaff"] = "Zerst\195\182rungsst\195\164be",
-			["HealStaff"] = GetString(SI_WEAPONTYPE9),
+			["HealStaff"] = AF_Localize(SI_WEAPONTYPE9),
 			["Bow"] = "B\195\182gen",
 			["TwoHand"] = "Zweih\195\164nder",
 			["OneHand"] = "Einh\195\164nder",
@@ -98,9 +108,9 @@ AF_Strings = {
 			["Ring"] = "Ring",
 			["Neck"] = "Hals",
 
-			["Aspect"] = GetString(SI_ENCHANTINGRUNECLASSIFICATION1),
-			["Essence"] = GetString(SI_ENCHANTINGRUNECLASSIFICATION2),
-			["Potency"] = GetString(SI_ENCHANTINGRUNECLASSIFICATION3),
+			["Aspect"] = AF_Localize(SI_ENCHANTINGRUNECLASSIFICATION1),
+			["Essence"] = AF_Localize(SI_ENCHANTINGRUNECLASSIFICATION2),
+			["Potency"] = AF_Localize(SI_ENCHANTINGRUNECLASSIFICATION3),
 
 			["Misc"] = "Sonstige",
 			["Jewelry"] = "Schmuck",
@@ -142,16 +152,16 @@ AF_Strings = {
 		TOOLTIPS = {
 			["All"] = "Tout",
 
-			["Axe"] = GetString(SI_WEAPONTYPE1),
-			["Sword"] = GetString(SI_WEAPONTYPE3),
-			["Hammer"] = GetString(SI_WEAPONTYPE2),
-			["Dagger"] = GetString(SI_WEAPONTYPE11),
-			["Fire"] = GetString(SI_WEAPONTYPE12),
-			["Frost"] = GetString(SI_WEAPONTYPE13),
-			["Lightning"] = GetString(SI_WEAPONTYPE15),
+			["Axe"] = AF_Localize(SI_WEAPONTYPE1),
+			["Sword"] = AF_Localize(SI_WEAPONTYPE3),
+			["Hammer"] = AF_Localize(SI_WEAPONTYPE2),
+			["Dagger"] = AF_Localize(SI_WEAPONTYPE11),
+			["Fire"] = AF_Localize(SI_WEAPONTYPE12),
+			["Frost"] = AF_Localize(SI_WEAPONTYPE13),
+			["Lightning"] = AF_Localize(SI_WEAPONTYPE15),
 
 			["DestructionStaff"] = "Destruction Staff",
-			["HealStaff"] = GetString(SI_WEAPONTYPE9),
+			["HealStaff"] = AF_Localize(SI_WEAPONTYPE9),
 			["Bow"] = "Arcs",
 			["TwoHand"] = "Deux Mains",
 			["OneHand"] = "Une Main",
@@ -167,9 +177,9 @@ AF_Strings = {
 			["Ring"] = "Anneaux",
 			["Neck"] = "Pendentifs",
 
-			["Aspect"] = GetString(SI_ENCHANTINGRUNECLASSIFICATION1),
-			["Essence"] = GetString(SI_ENCHANTINGRUNECLASSIFICATION2),
-			["Potency"] = GetString(SI_ENCHANTINGRUNECLASSIFICATION3),
+			["Aspect"] = AF_Localize(SI_ENCHANTINGRUNECLASSIFICATION1),
+			["Essence"] = AF_Localize(SI_ENCHANTINGRUNECLASSIFICATION2),
+			["Potency"] = AF_Localize(SI_ENCHANTINGRUNECLASSIFICATION3),
 
 			["Misc"] = "Divers",
 			["Jewelry"] = "Bijoux",
